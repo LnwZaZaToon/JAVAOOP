@@ -62,6 +62,21 @@ public abstract class Player {
         this.maxHP = 100; // Set a default max HP
         this.hp = this.maxHP; // Initialize hp to max HP
     }
+    
+        public void updatePlayerAnimation() {
+        if (isAttacking) {
+            count++; // Increment count for attack animation
+            if (count >= imAtk.length) {
+                isAttacking = false;  // Reset attack flag when done
+                count = 0;  // Reset count
+            }
+        } else {
+            count++; // Increment count for normal animation
+            if (count >= im.length) {
+                count = 0;  // Loop back to first frame
+            }
+        }
+    }
 
     // Getters and Setters for the player's attributes
 

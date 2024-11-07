@@ -11,6 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Iterator;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
@@ -64,7 +65,13 @@ public class Playstate extends JPanel implements ActionListener {
                     yVelocity2 = JUMP_STRENGTH;
                 }
                 if (a == KeyEvent.VK_SPACE) { // Player 1 attack
-                    player1.attack();
+                    if (player1 instanceof Mage) {
+                        Mage mage1 = (Mage) player1;  // Correct cast
+                        mage1.castFireball();  // Call the Mage's fireball casting method
+                        mage1.attack();
+                    } else {
+                        player1.attack();
+                    }
                 }
                 if (a == KeyEvent.VK_ENTER) { // Player 2 attack
                     player2.attack();
@@ -199,117 +206,109 @@ public class Playstate extends JPanel implements ActionListener {
         }
     });
 
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.drawImage(field.getImage(), 0, 0, 1000, 800, this);
-
-        Rectangle player1Bounds = new Rectangle(player1.x, player1.y, player1.im[player1.count].getIconWidth(), player1.im[player1.count].getIconHeight());
-        Rectangle player2Bounds = new Rectangle(player2.x, player2.y, player2.im[player2.count].getIconWidth(), player2.im[player2.count].getIconHeight());
-        // Draw player1
-        if (player1 instanceof Knight knight1) {
-            ImageIcon[] imToDraw = player1.isAttacking ? knight1.imAtk : knight1.im;
-            if (player1.facingDirection == -1) {
-                g.drawImage(imToDraw[player1.count].getImage(), player1.x + imToDraw[player1.count].getIconWidth(), player1.y, -imToDraw[player1.count].getIconWidth(), imToDraw[player1.count].getIconHeight(), this);
-            } else {
-                g.drawImage(imToDraw[player1.count].getImage(), player1.x, player1.y, this);
-            }
-        } else if (player1 instanceof Mage mage1) {
-            ImageIcon[] imToDraw = player1.isAttacking ? mage1.imAtk : mage1.im;
-            if (player1.facingDirection == -1) {
-                g.drawImage(imToDraw[player1.count].getImage(), player1.x + imToDraw[player1.count].getIconWidth(), player1.y, -imToDraw[player1.count].getIconWidth(), imToDraw[player1.count].getIconHeight(), this);
-            } else {
-                g.drawImage(imToDraw[player1.count].getImage(), player1.x, player1.y, this);
-            }
-        } else if (player1 instanceof Demon demon1) {
-            ImageIcon[] imToDraw = player1.isAttacking ? demon1.imAtk : demon1.im;
-            if (player1.facingDirection == -1) {
-                g.drawImage(imToDraw[player1.count].getImage(), player1.x + imToDraw[player1.count].getIconWidth(), player1.y, -imToDraw[player1.count].getIconWidth(), imToDraw[player1.count].getIconHeight(), this);
-            } else {
-                g.drawImage(imToDraw[player1.count].getImage(), player1.x, player1.y, this);
-            }
-        }
-        drawHPBar(g, player1,true);
-
-        // Draw player2 (attack animation if attacking)
-        if (player2 instanceof Knight knight2) {
-            ImageIcon[] imToDraw = player2.isAttacking ? knight2.imAtk : knight2.im;
-            if (player2.facingDirection == -1) {
-                g.drawImage(imToDraw[player2.count].getImage(), player2.x + imToDraw[player2.count].getIconWidth(), player2.y, -imToDraw[player2.count].getIconWidth(), imToDraw[player2.count].getIconHeight(), this);
-            } else {
-                g.drawImage(imToDraw[player2.count].getImage(), player2.x, player2.y, this);
-            }
-        } else if (player2 instanceof Mage mage2) {
-            ImageIcon[] imToDraw = player2.isAttacking ? mage2.imAtk : mage2.im;
-            if (player2.facingDirection == -1) {
-                g.drawImage(imToDraw[player2.count].getImage(), player2.x + imToDraw[player2.count].getIconWidth(), player2.y, -imToDraw[player2.count].getIconWidth(), imToDraw[player2.count].getIconHeight(), this);
-            } else {
-                g.drawImage(imToDraw[player2.count].getImage(), player2.x, player2.y, this);
-            }
-        } else if (player2 instanceof Demon demon2) {
-            ImageIcon[] imToDraw = player2.isAttacking ? demon2.imAtk : demon2.im;
-            if (player2.facingDirection == -1) {
-                g.drawImage(imToDraw[player2.count].getImage(), player2.x + imToDraw[player2.count].getIconWidth(), player2.y, -imToDraw[player2.count].getIconWidth(), imToDraw[player2.count].getIconHeight(), this);
-            } else {
-                g.drawImage(imToDraw[player2.count].getImage(), player2.x, player2.y, this);
-            }
-            if (player1.isAttacking && player1.x + player1.im[player1.count].getIconWidth() > player2.x && player1.x < player2.x + player2.im[player2.count].getIconWidth()) {
-        
-            }
-        }
-          drawHPBar(g, player2,false);
-        if (player1.isAttacking && player1Bounds.intersects(player2Bounds)) {
-            player2.takeDamage(1); // Apply 10 damage to player 2
-        }
-
-        if (player2.isAttacking && player2Bounds.intersects(player1Bounds)) {
-            player1.takeDamage(1); // Apply 10 damage to player 1
-        }
-
-    }
-private void drawHPBar(Graphics g, Player player, boolean isPlayer1) {
-    // Define the width and height of the HP bar
-    int barWidth = 250; // Width of the HP bar
-    int barHeight = 10; // Height of the HP bar
-
-    // Calculate the width of the HP bar based on the player's current HP
-    int hpBarWidth = (int) ((double) player.getHP() / player.getMaxHP() * barWidth);
-
-    // Position for top-left corner (Player 1)
-    int barXLeft = 10;  // Small offset from the left edge
-    int barY = 10;  // Small offset from the top edge
-
-    // Position for top-right corner (Player 2)
-    int barXRight = 1000 - barWidth - 30; // Assuming screen width is 500 (adjust as needed)
-
-    // Draw the HP bar based on which player it is
-    if (isPlayer1) {
-        // Draw the border for Player 1's HP bar (top-left)
-        g.setColor(Color.BLACK);  // Border color
-        g.drawRect(barXLeft, barY, barWidth, barHeight); // Draw border around the whole bar
-
-        // Fill the background of the HP bar (gray)
-        g.setColor(Color.GRAY);  
-        g.fillRect(barXLeft + 1, barY + 1, barWidth - 2, barHeight - 2); // Leave space for the border
-
-        // Fill the foreground of the HP bar (green) within the border
-        g.setColor(Color.RED);  
-        g.fillRect(barXLeft + 1, barY + 1, Math.min(hpBarWidth, barWidth - 2), barHeight - 2); // Ensure the green bar doesn't overflow
+ private void drawPlayer(Graphics g, Player player) {
+    ImageIcon[] imToDraw = player.isAttacking ? player.imAtk : player.im;
+    if (player.facingDirection == -1) {
+        g.drawImage(imToDraw[player.count].getImage(), player.x + imToDraw[player.count].getIconWidth(), player.y, -imToDraw[player.count].getIconWidth(), imToDraw[player.count].getIconHeight(), this);
     } else {
-        // Draw the border for Player 2's HP bar (top-right)
-        g.setColor(Color.BLACK);  // Border color
-        g.drawRect(barXRight, barY, barWidth, barHeight); // Draw border around the whole bar
+        g.drawImage(imToDraw[player.count].getImage(), player.x, player.y, this);
+    }
+}
 
-        // Fill the background of the HP bar (gray)
-        g.setColor(Color.GRAY);  
-        g.fillRect(barXRight + 1, barY + 1, barWidth - 2, barHeight - 2); // Leave space for the border
+public void paintComponent(Graphics g) {
+    super.paintComponent(g);
+    g.drawImage(field.getImage(), 0, 0, 1000, 800, this);
 
-        // Fill the foreground of the HP bar (green) within the border
-        g.setColor(Color.RED);  
-        g.fillRect(barXRight + 1, barY + 1, Math.min(hpBarWidth, barWidth - 2), barHeight - 2); // Ensure the green bar doesn't overflow
+    drawHPBar(g, player1, true);
+    drawHPBar(g, player2, false);
+
+    // Draw player1
+    if (player1 instanceof Mage mage1) {
+        mage1.updateFireballs();  // Update fireballs
+        Iterator<Fireball> fireballIterator = mage1.fireballs.iterator();  // Use an iterator to safely remove fireballs
+        while (fireballIterator.hasNext()) {
+            Fireball fireball = fireballIterator.next();
+            fireball.update();  // Move the fireballs
+            g.drawImage(fireball.imfire[fireball.count % fireball.imfire.length].getImage(), fireball.x, fireball.y, this);
+
+            // Check for collision with Player 2
+            Rectangle fireballBounds = new Rectangle(fireball.x, fireball.y, fireball.imfire[fireball.count % fireball.imfire.length].getIconWidth(), fireball.imfire[fireball.count % fireball.imfire.length].getIconHeight());
+            Rectangle player2Bounds = new Rectangle(player2.x, player2.y, player2.im[player2.count].getIconWidth(), player2.im[player2.count].getIconHeight());
+
+            if (fireballBounds.intersects(player2Bounds)) {
+            player2.takeDamage(50);  // Player 2 takes damage
+            fireball.deactivate();  // Deactivate fireball after hit
+            fireballIterator.remove();  // Remove fireball from the list
+            }
+        }
+    }
+    drawPlayer(g, player1); // Handle rendering for player1
+
+    // Draw player2
+    if (player2 instanceof Mage mage2) {
+        mage2.updateFireballs();
+        for (Fireball fireball : mage2.fireballs) {
+            g.drawImage(fireball.imfire[fireball.count % fireball.imfire.length].getImage(), fireball.x, fireball.y, this);
+        }
+    }
+    drawPlayer(g, player2); // Handle rendering for player2
+
+    // Collision and damage logic
+    Rectangle player1Bounds = new Rectangle(player1.x, player1.y, player1.im[player1.count].getIconWidth(), player1.im[player1.count].getIconHeight());
+    Rectangle player2Bounds = new Rectangle(player2.x, player2.y, player2.im[player2.count].getIconWidth(), player2.im[player2.count].getIconHeight());
+
+    if (player1.isAttacking && player1Bounds.intersects(player2Bounds)) {
+        player2.takeDamage(1);
+    }
+
+    if (player2.isAttacking && player2Bounds.intersects(player1Bounds)) {
+        player1.takeDamage(1);
     }
 }
 
 
+    private void drawHPBar(Graphics g, Player player, boolean isPlayer1) {
+        // Define the width and height of the HP bar
+        int barWidth = 250; // Width of the HP bar
+        int barHeight = 10; // Height of the HP bar
+
+        // Calculate the width of the HP bar based on the player's current HP
+        int hpBarWidth = (int) ((double) player.getHP() / player.getMaxHP() * barWidth);
+
+        // Position for top-left corner (Player 1)
+        int barXLeft = 10;  // Small offset from the left edge
+        int barY = 10;  // Small offset from the top edge
+
+        // Position for top-right corner (Player 2)
+        int barXRight = 1000 - barWidth - 30; // Assuming screen width is 500 (adjust as needed)
+
+        // Draw the HP bar based on which player it is
+        if (isPlayer1) {
+            // Draw the border for Player 1's HP bar (top-left)
+            g.setColor(Color.BLACK);  // Border color
+            g.drawRect(barXLeft, barY, barWidth, barHeight); // Draw border around the whole bar
+
+            // Fill the background of the HP bar (gray)
+            g.setColor(Color.GRAY);
+            g.fillRect(barXLeft + 1, barY + 1, barWidth - 2, barHeight - 2); // Leave space for the border
+
+            // Fill the foreground of the HP bar (green) within the border
+            g.setColor(Color.RED);
+            g.fillRect(barXLeft + 1, barY + 1, Math.min(hpBarWidth, barWidth - 2), barHeight - 2); // Ensure the green bar doesn't overflow
+        } else {
+            // Draw the border for Player 2's HP bar (top-right)
+            g.setColor(Color.BLACK);  // Border color
+            g.drawRect(barXRight, barY, barWidth, barHeight); // Draw border around the whole bar
+
+            // Fill the background of the HP bar (gray)
+            g.setColor(Color.GRAY);
+            g.fillRect(barXRight + 1, barY + 1, barWidth - 2, barHeight - 2); // Leave space for the border
+
+            // Fill the foreground of the HP bar (green) within the border
+            g.setColor(Color.RED);
+            g.fillRect(barXRight + 1, barY + 1, Math.min(hpBarWidth, barWidth - 2), barHeight - 2); // Ensure the green bar doesn't overflow
+        }
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
