@@ -12,7 +12,7 @@ import javax.swing.ImageIcon;
  */
 public class Demon extends Player {
 
-    public ImageIcon[] im = new ImageIcon[7];
+    
 
     public Demon() {
         this.setAgility(150);

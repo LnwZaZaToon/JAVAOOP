@@ -12,7 +12,7 @@ import javax.swing.ImageIcon;
  */
 public class Mage extends Player {
 
-    public ImageIcon[] im = new ImageIcon[7];
+
 
     public Mage() {
         this.setAgility(100);

@@ -10,23 +10,23 @@ import javax.swing.ImageIcon;
  *
  * @author Toon
  */
-public class Knight  extends Player{
-    public ImageIcon[] im = new ImageIcon[7];
-    
-    public Knight(int x , int y){
-        super(x,y);
+public class Knight extends Player {
+
+    public Knight(int x, int y) {
+        super(x, y);
     }
-    
-    
+
     public Knight() {
         this.setAgility(20);
         this.setHP(200);
         this.setDefense(200);
         this.setStrength(50);
-        for(int i=0;i<im.length;i++){
-            im[i] = new ImageIcon(this.getClass().getResource("Knight"+(i+1)+".png"));        
+        for (int i = 0; i < im.length; i++) {
+            im[i] = new ImageIcon(this.getClass().getResource("Knight" + (i + 1) + ".png"));
         }
-        
+        for (int i = 0; i < imAtk.length; i++) {
+            imAtk[i] = new ImageIcon(this.getClass().getResource("Knightattack" + (i + 1) + ".png"));
+        }
+
     }
 }
-
