@@ -17,10 +17,8 @@ public class Knight extends Player {
     }
 
     public Knight() {
-        this.setAgility(20);
-        this.setHP(200);
-        this.setDefense(200);
-        this.setStrength(50);
+        this.setHP(1000);
+        this.setMaxHP(1000);
         for (int i = 0; i < im.length; i++) {
             im[i] = new ImageIcon(this.getClass().getResource("Knight" + (i + 1) + ".png"));
         }

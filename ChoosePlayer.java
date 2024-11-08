@@ -20,24 +20,38 @@ public class ChoosePlayer extends JPanel {
     Player player2;
     String class1;
     String class2;
-    JButton Heros1 = new JButton("Heros");
-    JButton Demons1 = new JButton("Demons");
-    JButton Heros2 = new JButton("Heros");
-    JButton Demons2 = new JButton("Demons");
     
-    JButton Bnext = new JButton("Next");
-    JButton Bback = new JButton("Back");
-    JButton Breset = new JButton("Reset");
+    
+    private ImageIcon herosbtn = new ImageIcon(this.getClass().getResource("herobtn.jpg"));
+    private ImageIcon demonbtn = new ImageIcon(this.getClass().getResource("demonbtn.jpg"));
+    private ImageIcon nextbtn = new ImageIcon(this.getClass().getResource("nextbtn.jpg"));
+    private ImageIcon   backbtn = new ImageIcon(this.getClass().getResource("backbtn.jpg"));
+    private ImageIcon   resetbtn = new ImageIcon(this.getClass().getResource("resetbtn.jpg"));
+    private ImageIcon   knightbtn = new ImageIcon(this.getClass().getResource("knightbtn.jpg"));
+    private ImageIcon   skeletonbtn = new ImageIcon(this.getClass().getResource("skeletonbtn.jpg"));
+    private ImageIcon   magebtn = new ImageIcon(this.getClass().getResource("magebtn.jpg"));
+    
+    
+    
+    
+    JButton Heros1 = new JButton(herosbtn);
+    JButton Demons1 = new JButton(demonbtn);
+    JButton Heros2 = new JButton(herosbtn);
+    JButton Demons2 = new JButton(demonbtn);
+    
+    JButton Bnext = new JButton(nextbtn);
+    JButton Bback = new JButton(backbtn);
+    JButton Breset = new JButton(resetbtn);
 
     // knight
-    JButton KnightClass1 = new JButton("Knight");
-    JButton KnightClass2 = new JButton("Knight");
+    JButton KnightClass1 = new JButton(knightbtn);
+    JButton KnightClass2 = new JButton(knightbtn);
     //demon
-    JButton DemonsClass1 = new JButton("Demons");
-    JButton DemonsClass2 = new JButton("Demons");
+    JButton DemonsClass1 = new JButton(demonbtn);
+    JButton DemonsClass2 = new JButton(demonbtn);
     // mage
-    JButton MageClass1 = new JButton("Mage");
-    JButton MageClass2 = new JButton("Mage");
+    JButton MageClass1 = new JButton(magebtn);
+    JButton MageClass2 = new JButton(magebtn);
 
     JLabel p1Status = new JLabel("");
     JLabel p2Status = new JLabel("");

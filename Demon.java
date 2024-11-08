@@ -15,12 +15,13 @@ public class Demon extends Player {
     
 
     public Demon() {
-        this.setAgility(150);
         this.setHP(500);
-        this.setDefense(150);
-        this.setStrength(20);
+        this.setMaxHP(500);
         for (int i =0; i <  im.length; i++) {
             im[i] = new ImageIcon(this.getClass().getResource("demon"+(i+1) + ".png"));
+        }
+        for (int i = 0; i < imAtk.length; i++) {
+            imAtk[i] = new ImageIcon(this.getClass().getResource("Demonattack" + (i + 1) + ".png"));
         }
     }
 

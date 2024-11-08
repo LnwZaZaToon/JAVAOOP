@@ -1,10 +1,11 @@
 package newgame;
 
+import java.awt.Image;
 import java.awt.geom.Rectangle2D;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-public class Fireball extends JPanel {
+public class Fireball extends JPanel implements Runnable {
 
     public ImageIcon[] imfire = new ImageIcon[10]; // Array to hold the images for animation
     public int x, y; // Position of the fireball
@@ -12,6 +13,7 @@ public class Fireball extends JPanel {
     public int direction; // Direction: 1 for right, -1 for left
     public boolean isActive = true; // Fireball's active state
     public int velocity = 5; // Speed of the fireball
+    private Thread fireballThread;
 
     // Constructor to initialize the fireball with its position and direction
     public Fireball(int x, int y, int direction) {
@@ -19,50 +21,71 @@ public class Fireball extends JPanel {
             // Load fireball images from the resources folder
             imfire[i] = new ImageIcon(this.getClass().getResource("b" + (i + 1) + ".png"));
         }
-        this.x = x;
-        this.y = y;
+        this.x = x+50;
+        this.y = y+50;
         this.direction = direction; // Set direction based on player's facing direction
+
+        startThread(); // Start the fireball's movement thread immediately
     }
 
-    // Method to move the fireball based on direction
+    // Start the thread for the fireball animation and movement
+    private void startThread() {
+        fireballThread = new Thread(this);
+        fireballThread.start();
+    }
+
+    // Method to move the fireball based on direction and update animation frame
     public void move() {
         if (isActive) {
             this.x += velocity * direction; // Move the fireball in the specified direction
-            count++; // Update animation frame (if you want to animate)
-            if (count >= imfire.length) {
-                count = 0; // Reset frame count if needed
-            }
+            count = (count + 1) % imfire.length; // Cycle through animation frames
         }
     }
 
-    // Method to get the boundary of the fireball for collision detection
-    public Rectangle2D getBound() {
-        return new Rectangle2D.Double(x, y, 25, 25); // Size of the fireball (adjust as needed)
-    }
+    // Main thread logic
+public void run() {
+    try {
+        while (isActive) {
+            move(); // Move the fireball based on direction
+            checkOutOfBounds(); // Check if the fireball is out of bounds
 
-    // Method to update the fireball's state, like moving and deactivating when it goes off-screen
-    public void update() {
-        if (isActive) {
-            move(); // Move the fireball
-            // Check if the fireball goes off-screen (assuming a screen width of 1000)
-            if (this.x < 0 || this.x > 1000) {
-                deactivate(); // Deactivate fireball if out of screen bounds
-            }
+            Thread.sleep(10); // Control speed (adjust if needed)
+        }
+    } catch (InterruptedException e) {
+        // Thread was interrupted, exit gracefully
+        Thread.currentThread().interrupt(); // Reset the interrupted status
+    }
+}
+
+    // Method to check if fireball is out of bounds
+    public void checkOutOfBounds() {
+        if (this.x < 0 || this.x > 1000) { // Assuming screen width is 1000
+            deactivate();
         }
     }
 
-    // Deactivate the fireball (e.g., remove from game objects or set it to inactive)
-   public void deactivate() {
-        this.isActive = false; // Mark the fireball as inactive
+    // Deactivate the fireball
+    public void deactivate() {
+        this.isActive = false;  // Mark as inactive
+        if (fireballThread != null && fireballThread.isAlive()) {
+            fireballThread.interrupt();  // Stop the thread
+        }
+    }
+    
+    
+
+    // Get the current animation frame based on the count
+    public Image getImage() {
+        return imfire[count].getImage(); // Use count to get the current animation frame
     }
 
-    // Optional: Getter for the current animation frame to be drawn (can be used in the paintComponent)
-    public ImageIcon getCurrentFrame() {
-        return imfire[count]; // Return the current animation frame based on 'count'
-    }
-
-    // Optional: Method to check if fireball is active (for cleanup or collision purposes)
+    // Optional: Method to check if fireball is active
     public boolean isActive() {
         return isActive;
+    }
+
+    // Get the bounds for collision detection
+    public Rectangle2D getBound() {
+        return new Rectangle2D.Double(x, y, 25, 25); // Size of the fireball
     }
 }

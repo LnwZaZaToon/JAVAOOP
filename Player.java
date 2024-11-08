@@ -50,7 +50,6 @@ public abstract class Player {
     // Constructor for Player with default facing direction and max HP
     public Player() {
         this.facingDirection = 1;
-        this.maxHP = 100; // Set a default max HP
         this.hp = this.maxHP; // Initialize hp to max HP
     }
 
@@ -62,8 +61,8 @@ public abstract class Player {
         this.maxHP = 100; // Set a default max HP
         this.hp = this.maxHP; // Initialize hp to max HP
     }
-    
-        public void updatePlayerAnimation() {
+
+    public void updatePlayerAnimation() {
         if (isAttacking) {
             count++; // Increment count for attack animation
             if (count >= imAtk.length) {
@@ -79,7 +78,6 @@ public abstract class Player {
     }
 
     // Getters and Setters for the player's attributes
-
     public double getAgility() {
         return agility;
     }
@@ -94,6 +92,14 @@ public abstract class Player {
 
     public void setDefense(double defense) {
         this.defense = defense;
+    }
+
+    public int getImageHeight() {
+        if (im[0] != null) {  // Ensure the image is not null
+            return im[0].getIconHeight(); // Return the image height
+        } else {
+            return 0;  // Return 0 if the image is not loaded yet
+        }
     }
 
     public int getHP() {
@@ -115,4 +121,18 @@ public abstract class Player {
     public void setStrength(double strength) {
         this.strength = strength;
     }
+    
+        public void reduceHP(int amount) {
+        this.hp = Math.max(0, hp - amount);  // Ensure HP doesn't go below 0
+    }
+
+    public void restoreHP(int amount) {
+        this.hp = Math.min(maxHP, hp + amount);  // Ensure HP doesn't exceed maxHP
+    }
+
+    public void setMaxHP(int maxHP) {
+        this.maxHP = maxHP;
+    }
+    
+    
 }
