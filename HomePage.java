@@ -25,6 +25,7 @@ public class HomePage extends JPanel {
         BExit.setBounds(500, 300, 170,90);
         add(BStart);
         add(BExit);
+        
        
     }
 

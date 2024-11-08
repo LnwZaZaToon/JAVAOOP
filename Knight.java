@@ -25,6 +25,9 @@ public class Knight extends Player {
         for (int i = 0; i < imAtk.length; i++) {
             imAtk[i] = new ImageIcon(this.getClass().getResource("Knightattack" + (i + 1) + ".png"));
         }
+        for (int i = 0; i < 1; i++) {
+            hitAnimationFrames[i] = new ImageIcon(this.getClass().getResource("Knighthit" + (i + 1) + ".png"));
+        }
 
     }
 }

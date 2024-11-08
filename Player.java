@@ -16,7 +16,12 @@ public abstract class Player {
     public int facingDirection;
     public ImageIcon[] im = new ImageIcon[7];
     public ImageIcon[] imAtk = new ImageIcon[6];
+    public ImageIcon[] hitAnimationFrames = new ImageIcon[1];  // Hit animation frames
     public boolean isAttacking = false;
+    
+    private boolean isHit = false;
+    private int hitAnimationDuration = 30; // Duration for the hit animation
+    public int hitCounter = 0; // Counter for hit animation frames
 
     // Method to take damage and reduce HP
     public void takeDamage(int damage) {
@@ -24,7 +29,11 @@ public abstract class Player {
         if (this.hp < 0) {
             this.hp = 0; // Prevent negative HP
         }
+                isHit = true; // Start hit animation
+        hitCounter = 0; // Reset hit animation counter
     }
+    
+   
 
     // Method to heal the player
     public void heal(int healingAmount) {
@@ -33,6 +42,13 @@ public abstract class Player {
             this.hp = this.maxHP; // Ensure HP doesn't exceed max
         }
     }
+
+    public boolean getisHit() {
+        return isHit;
+    }
+    
+
+
 
     // Method to initiate attack
     public void attack() {
@@ -63,7 +79,18 @@ public abstract class Player {
     }
 
     public void updatePlayerAnimation() {
-        if (isAttacking) {
+        if (isHit) {
+            // Display hit animation frame
+            if (hitCounter < hitAnimationFrames.length) {
+                count = hitCounter; // Set current frame for hit animation
+            }
+            hitCounter++;
+            
+            if (hitCounter >= hitAnimationDuration) {
+                isHit = false;  // Reset hit state after animation
+                count = 0; // Reset to normal animation
+            }
+        } else if (isAttacking) {
             count++; // Increment count for attack animation
             if (count >= imAtk.length) {
                 isAttacking = false;  // Reset attack flag when done
@@ -80,6 +107,10 @@ public abstract class Player {
     // Getters and Setters for the player's attributes
     public double getAgility() {
         return agility;
+    }
+        public void setHit(boolean hit) {
+        isHit = hit;
+        hitCounter = 0; // Reset counter to start the animation
     }
 
     public void setAgility(double agility) {

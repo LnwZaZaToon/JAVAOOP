@@ -21,6 +21,10 @@ public class Mage extends Player {
         for (int i = 0; i < imAtk.length; i++) {
             imAtk[i] = new ImageIcon(this.getClass().getResource("Wizardattack" + (i + 1) + ".png"));
         }
+        
+                for (int i = 0; i < 1; i++) {
+            hitAnimationFrames[i] = new ImageIcon(this.getClass().getResource("Magehit" + (i + 1) + ".png"));
+        }
     }
 
     // Method to cast a fireball

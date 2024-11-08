@@ -4,29 +4,27 @@
  */
 package newgame;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 public class GameOver extends JPanel {
+    public GameOver(String result) {
+        setLayout(new BorderLayout());
+        JLabel message = new JLabel(result, SwingConstants.CENTER);
+        message.setFont(new Font("Arial", Font.BOLD, 30));
+        message.setForeground(Color.RED);
+        add(message, BorderLayout.CENTER);
 
-    public JButton BStartover = new JButton("Restart");
-    public JButton BExitover = new JButton("GameOver");
-
-    public GameOver() {
-        this.setLayout(null);
-        BExitover.setBounds(500, 650, 150, 90);
-        add(BExitover);
-        add(BStartover);
-        BStartover.setBounds(750, 650, 150, 90);
-        add(BStartover);
+        JButton retryButton = new JButton("Play Again");
+        retryButton.addActionListener(e -> {
+            // Add action to restart the game
+        });
+        add(retryButton, BorderLayout.SOUTH);
     }
-    	public void paintComponent(Graphics g){
-		  super.paintComponent(g);
-
-		  
-		  
-	      
-	  }
-
 }

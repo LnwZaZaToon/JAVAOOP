@@ -14,21 +14,28 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Iterator;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class Playstate extends JPanel implements ActionListener {
+    
+    JButton restartbtn = new JButton("RESTART");
+    JButton exitbtn = new JButton("EXIT");
 
     private ImageIcon field = new ImageIcon(this.getClass().getResource("Bg.png"));
+    private ImageIcon fieldDirt = new ImageIcon(this.getClass().getResource("dirt2.png"));
     private ImageIcon fieldHeart = new ImageIcon(this.getClass().getResource("heart2.png"));
     private static final int MATCH_DURATION = 30000; // Duration in milliseconds (1 minute)
     private int timeRemaining = MATCH_DURATION;
     private Thread timerThread; // Removed the duplicate declaration here
     private Thread gameThread;
-    private boolean matchOver = false;
-    
+    public boolean matchOver = false;
+
+
 
     private Player player1;
     private Player player2;
+    private Playstate p1;
 
     // Key state variables
     private boolean keyA = false; // For player1 left
@@ -40,16 +47,23 @@ public class Playstate extends JPanel implements ActionListener {
     private int yVelocity1 = 0, yVelocity2 = 0;
     private final int GRAVITY = 1;
     private final int JUMP_STRENGTH = -15; // Adjust for jump height
-
-    GameOver gameOverpanel = new GameOver();
+    
 
     public Playstate() {
         this.setFocusable(true);
         setLayout(null);
+        
+        restartbtn.setBounds(300, 400 , 170, 90);
+        add(restartbtn);
+        exitbtn.setBounds(500, 400, 170, 90);
+        add(exitbtn);
+        restartbtn.setVisible(false);
+        exitbtn.setVisible(false);
 
         this.addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 int a = e.getKeyCode();
+
                 if (a == KeyEvent.VK_A) {
                     keyA = true;
                     player1.facingDirection = -1;
@@ -123,6 +137,8 @@ public class Playstate extends JPanel implements ActionListener {
         actor2.start();
     }
 
+
+
     public void setPlayers(Player player1, Player player2) {
         this.player1 = player1;
         this.player2 = player2;
@@ -162,9 +178,9 @@ public class Playstate extends JPanel implements ActionListener {
     }
 
     private void startTimerThread() {
-      
+
         timerThread = new Thread(() -> {
-            while (timeRemaining > 0) {
+            while (timeRemaining > 0 && !matchOver) {
                 try {
                     Thread.sleep(1000);  // Wait for 1 second
                     timeRemaining -= 1000;  // Decrement the time counter
@@ -174,7 +190,7 @@ public class Playstate extends JPanel implements ActionListener {
                 }
             }
             matchOver = true;  // Set match over when time is up
-          
+
             repaint();
         });
         timerThread.start();  // Start the timer thread
@@ -183,7 +199,7 @@ public class Playstate extends JPanel implements ActionListener {
     Thread actor1 = new Thread(new Runnable() {
         public void run() {
 
-            while (true) {
+            while (!matchOver) {
                 try {
                     Thread.sleep(20);
                 } catch (Exception e) {
@@ -224,7 +240,7 @@ public class Playstate extends JPanel implements ActionListener {
 
     Thread actor2 = new Thread(new Runnable() {
         public void run() {
-            while (true) {
+            while (!matchOver) {
                 try {
                     Thread.sleep(20);
                 } catch (Exception e) {
@@ -306,17 +322,55 @@ public class Playstate extends JPanel implements ActionListener {
     }
 
     private void drawPlayer(Graphics g, Player player) {
-        ImageIcon[] imToDraw = player.isAttacking ? player.imAtk : player.im;
-        if (player.facingDirection == -1) {
-            g.drawImage(imToDraw[player.count].getImage(), player.x + imToDraw[player.count].getIconWidth(), player.y, -imToDraw[player.count].getIconWidth(), imToDraw[player.count].getIconHeight(), this);
+        ImageIcon[] imToDraw;
+
+        // Determine which animation to draw based on player's state
+        if (player.getisHit()) {
+            imToDraw = player.hitAnimationFrames;
+            player.hitCounter++; // Increment hit frame counter
+
+            // Reset `isHit` after displaying hit frame
+            if (player.hitCounter >= player.hitAnimationFrames.length) {
+                player.setHit(false); // Stop hit animation
+                player.hitCounter = 0; // Reset counter
+            }
+        } else if (player.isAttacking) {
+            imToDraw = player.imAtk;
         } else {
-            g.drawImage(imToDraw[player.count].getImage(), player.x, player.y, this);
+            imToDraw = player.im;
         }
+
+        // Draw the image based on facing direction
+        int imgWidth = imToDraw[Math.min(player.count, imToDraw.length - 1)].getIconWidth();
+        int imgHeight = imToDraw[Math.min(player.count, imToDraw.length - 1)].getIconHeight();
+
+        if (player.facingDirection == -1) {
+            g.drawImage(imToDraw[Math.min(player.count, imToDraw.length - 1)].getImage(), player.x + imgWidth, player.y, -imgWidth, imgHeight, this);
+        } else {
+            g.drawImage(imToDraw[Math.min(player.count, imToDraw.length - 1)].getImage(), player.x, player.y, this);
+        }
+    }
+
+    private void drawGameOverPanel(Graphics g) {
+        g.setColor(new Color(0, 0, 0, 150));  // Black with transparency
+        g.fillRect(0, 0, getWidth(), getHeight());
+        String result = determineWinner();
+        // Draw Game Over text
+        g.setColor(Color.WHITE);
+        g.setFont(new Font("Arial", Font.BOLD, 50));
+        g.drawString("Game Over" + " " + result, getWidth() / 2 - 300, getHeight() / 2 - 50);
+
+        restartbtn.setVisible(true);
+        exitbtn.setVisible(true);
+        g.setFont(new Font("Arial", Font.PLAIN, 30));
+ //       g.drawString("Press R to Restart", getWidth() / 2 - 120, getHeight() / 2 + 20);
+  //      g.drawString("Press Q to Quit", getWidth() / 2 - 100, getHeight() / 2 + 70);
     }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.drawImage(field.getImage(), 0, 0, 1000, 800, this);
+        g.drawImage(fieldDirt.getImage(), 0, getHeight() - 262, 1000, 900, this);
 
         int seconds = timeRemaining / 1000;
         g.setColor(Color.BLACK);
@@ -327,19 +381,12 @@ public class Playstate extends JPanel implements ActionListener {
         // Check if match is over and display result
         if (player1.getHP() <= 0 || player2.getHP() <= 0) {
             matchOver = true;
-           
-            String result = determineWinner();
-            g.setColor(Color.RED);
-            g.drawString(result, getWidth() / 2 - 50, getHeight() / 2);
-            
+            drawGameOverPanel(g);
+
         }
 
-        if (matchOver) {           
-          
-            String result = determineWinner();
-            g.setColor(Color.RED);
-            g.drawString(result, getWidth() / 2 - 50, getHeight() / 2);
-            
+        if (matchOver) {
+            drawGameOverPanel(g);
         }
 
         drawHPBar(g, player1, true);  // For player 1 (on left)
@@ -352,9 +399,18 @@ public class Playstate extends JPanel implements ActionListener {
                 if (fireball.isActive()) {  // Draw only active fireballs
                     g.drawImage(fireball.getImage(), fireball.x, fireball.y, this);
                     // Check collision with player2
-                    if (fireball.getBound().intersects(new Rectangle(player2.x, player2.y, player2.im[player2.count].getIconWidth(), player2.im[player2.count].getIconHeight()))) {
-                        player2.takeDamage(30); // Reduce player2 HP
-                        fireball.deactivate(); // Deactivate fireball on collision
+                    Rectangle player2Bounds = new Rectangle(
+                            player2.x,
+                            player2.y,
+                            player2.im[Math.min(player2.count, player2.im.length - 1)].getIconWidth(),
+                            player2.im[Math.min(player2.count, player2.im.length - 1)].getIconHeight()
+                    );
+
+                    if (fireball.getBound().intersects(player2Bounds)) {
+                        player2.takeDamage(30);  // Reduce player2 HP
+                        fireball.deactivate();  // Deactivate fireball on collision
+                        player2.setHit(true);    // Trigger hit animation
+                        player2.hitCounter = 0;  // Reset hit counter for a fresh animation cycle
                     }
                 }
             }
@@ -363,18 +419,29 @@ public class Playstate extends JPanel implements ActionListener {
         drawPlayer(g, player1);
 
         if (player2 instanceof Mage mage2) {
-            mage2.updateFireballs();
+            mage2.updateFireballs(); // Update fireballs list
             for (Fireball fireball : mage2.fireballs) {
-                if (fireball.isActive()) {
+                if (fireball.isActive()) {  // Draw only active fireballs
                     g.drawImage(fireball.getImage(), fireball.x, fireball.y, this);
+
                     // Check collision with player1
-                    if (fireball.getBound().intersects(new Rectangle(player1.x, player1.y, player1.im[player1.count].getIconWidth(), player1.im[player1.count].getIconHeight()))) {
-                        player1.takeDamage(30); // Reduce player1 HP
-                        fireball.deactivate(); // Deactivate fireball on collision
+                    Rectangle player1Bounds = new Rectangle(
+                            player1.x,
+                            player1.y,
+                            player1.im[Math.min(player1.count, player1.im.length - 1)].getIconWidth(),
+                            player1.im[Math.min(player1.count, player1.im.length - 1)].getIconHeight()
+                    );
+
+                    if (fireball.getBound().intersects(player1Bounds)) {
+                        player1.takeDamage(30);  // Reduce player1 HP
+                        fireball.deactivate();   // Deactivate fireball on collision
+                        player1.setHit(true);    // Trigger hit animation
+                        player1.hitCounter = 0;  // Reset hit counter for a fresh animation cycle
                     }
                 }
             }
         }
+
         drawPlayer(g, player2);
 
         // Collision and damage logic

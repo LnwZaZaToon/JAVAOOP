@@ -7,6 +7,8 @@ package newgame;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import javax.swing.JFrame;
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -39,7 +41,19 @@ public class NewGame extends JFrame implements ActionListener {
         chooseplayer.Bnext.addActionListener(this);
         chooseplayer.Bback.addActionListener(this);
         chooseplayer.Breset.addActionListener(this);
+        playstate.restartbtn.addActionListener(this);
+        playstate.exitbtn.addActionListener(this);
 
+    }
+
+    private void resetGame() {
+        playstate.matchOver = false; // Reset match over flag
+        this.setLocationRelativeTo(null); // Reset window position
+        this.remove(playstate); // Remove playstate
+        this.add(home); // Go back to home screen
+        home.requestFocusInWindow(); // Ensure home screen has focus
+        this.revalidate();
+        this.repaint();
     }
 
     public static void main(String[] args) {
@@ -104,16 +118,30 @@ public class NewGame extends JFrame implements ActionListener {
 
         } else if (e.getSource() == chooseplayer.Bnext) {
             if (chooseplayer.CheckPlayerNULL()) {
-                 playstate.setPlayers(chooseplayer.player1, chooseplayer.player2);
+                playstate.setPlayers(chooseplayer.player1, chooseplayer.player2);
                 this.setLocationRelativeTo(null);
                 this.remove(chooseplayer);
                 this.add(playstate);
                 playstate.requestFocusInWindow();
 
-            }
-            else{
+            } else {
                 showMessageDialog(null, "you have to select player 1 and 2 first");
             }
+        } else if (e.getSource() == playstate.restartbtn) {
+            this.setLocationRelativeTo(null);
+            this.remove(playstate);
+             playstate = new Playstate();
+            this.add(home);
+            home.requestFocusInWindow();
+            chooseplayer.Reset();
+            playstate.matchOver = false;
+            playstate.validate();
+            playstate.repaint();
+            
+
+        } else if (e.getSource() == playstate.exitbtn) {
+            System.exit(0);
+
         }
         this.validate();
         this.repaint();
