@@ -18,20 +18,24 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class Playstate extends JPanel implements ActionListener {
-    
-    JButton restartbtn = new JButton("RESTART");
-    JButton exitbtn = new JButton("EXIT");
 
-    private ImageIcon field = new ImageIcon(this.getClass().getResource("Bg.png"));
+    public ImageIcon field;
+    public ImageIcon field2;
+    public ImageIcon field3;
     private ImageIcon fieldDirt = new ImageIcon(this.getClass().getResource("dirt2.png"));
     private ImageIcon fieldHeart = new ImageIcon(this.getClass().getResource("heart2.png"));
+
+    private ImageIcon fieldrestart = new ImageIcon(this.getClass().getResource("restartbtn.jpg"));
+    private ImageIcon fieldexit = new ImageIcon(this.getClass().getResource("exitbtn.jpg"));
+
+    JButton restartbtn = new JButton(fieldrestart);
+    JButton exitbtn = new JButton(fieldexit);
+
     private static final int MATCH_DURATION = 30000; // Duration in milliseconds (1 minute)
     private int timeRemaining = MATCH_DURATION;
     private Thread timerThread; // Removed the duplicate declaration here
     private Thread gameThread;
     public boolean matchOver = false;
-
-
 
     private Player player1;
     private Player player2;
@@ -47,13 +51,13 @@ public class Playstate extends JPanel implements ActionListener {
     private int yVelocity1 = 0, yVelocity2 = 0;
     private final int GRAVITY = 1;
     private final int JUMP_STRENGTH = -15; // Adjust for jump height
-    
 
     public Playstate() {
+
         this.setFocusable(true);
         setLayout(null);
-        
-        restartbtn.setBounds(300, 400 , 170, 90);
+
+        restartbtn.setBounds(300, 400, 170, 90);
         add(restartbtn);
         exitbtn.setBounds(500, 400, 170, 90);
         add(exitbtn);
@@ -92,7 +96,11 @@ public class Playstate extends JPanel implements ActionListener {
                     if (player1 instanceof Mage) {
                         Mage mage1 = (Mage) player1;  // Correct cast
                         mage1.castFireball();  // Call the Mage's fireball casting method
-                        mage1.attack();
+                        mage1.MageAttack();
+                    } else if (player1 instanceof DarkMage) {
+                        DarkMage mage1 = (DarkMage) player1;  // Correct cast
+                        mage1.castFireball();  // Call the Mage's fireball casting method
+                        mage1.MageAttack();
                     } else {
                         player1.attack();
                     }
@@ -101,7 +109,11 @@ public class Playstate extends JPanel implements ActionListener {
                     if (player2 instanceof Mage) {
                         Mage mage2 = (Mage) player2;  // Correct cast
                         mage2.castFireball();  // Call the Mage's fireball casting method
-                        mage2.attack();
+                        mage2.MageAttack();
+                    } else if (player2 instanceof DarkMage) {
+                        DarkMage mage1 = (DarkMage) player2;  // Correct cast
+                        mage1.castFireball();  // Call the Mage's fireball casting method
+                        mage1.MageAttack();
                     } else {
                         player2.attack();
                     }
@@ -122,9 +134,21 @@ public class Playstate extends JPanel implements ActionListener {
                 }
                 if (a == KeyEvent.VK_SPACE) {
                     player1.stopAttack();
+                    if (player1 instanceof Mage mage1) {
+                        mage1.StopMageAttack();
+                    }
+                    if (player1 instanceof DarkMage mage1) {
+                        mage1.StopMageAttack();
+                    }
                 }
                 if (a == KeyEvent.VK_ENTER) {
                     player2.stopAttack();
+                    if (player2 instanceof Mage mage2) {
+                        mage2.StopMageAttack();
+                    }
+                    if (player2 instanceof DarkMage mage2) {
+                        mage2.StopMageAttack();
+                    }
                 }
 
                 player1.count = 0;
@@ -136,8 +160,6 @@ public class Playstate extends JPanel implements ActionListener {
         actor1.start();
         actor2.start();
     }
-
-
 
     public void setPlayers(Player player1, Player player2) {
         this.player1 = player1;
@@ -230,6 +252,10 @@ public class Playstate extends JPanel implements ActionListener {
                         player1.y = 372;
                         isJumping1 = false;
                         yVelocity1 = 0;
+                    } else if (player1.y >= 372 && player1 instanceof DarkMage) {
+                        player1.y = 372;
+                        isJumping1 = false;
+                        yVelocity1 = 0;
                     }
                 }
 
@@ -271,6 +297,10 @@ public class Playstate extends JPanel implements ActionListener {
                         player2.y = 372;  // Set to the landing position for Demon
                         isJumping2 = false;  // Stop jumping
                         yVelocity2 = 0;  // Reset velocity
+                    } else if (player2 instanceof DarkMage && player2.y >= 372) {
+                        player2.y = 372;  // Set to the landing position for Demon
+                        isJumping2 = false;  // Stop jumping
+                        yVelocity2 = 0;  // Reset velocity
                     }
                 }
 
@@ -278,48 +308,6 @@ public class Playstate extends JPanel implements ActionListener {
             }
         }
     });
-
-    private void updatePlayerPositions() {
-        if (keyA && player1.x > 0) {
-            player1.x -= 10;
-            player1.count = (player1.count + 1) % 6;
-        }
-        if (keyD && player1.x < getWidth() - player1.im[player1.count].getIconWidth()) {
-            player1.x += 10;
-            player1.count = (player1.count + 1) % 6;
-        }
-
-        if (isJumping1) {
-            player1.y += yVelocity1;
-            yVelocity1 += GRAVITY;
-
-            if (player1.y >= 500) {
-                player1.y = 500;
-                isJumping1 = false;
-                yVelocity1 = 0;
-            }
-        }
-
-        if (keyLeft && player2.x > 0) {
-            player2.x -= 10;
-            player2.count = (player2.count + 1) % 6;
-        }
-        if (keyRight && player2.x < getWidth() - player2.im[player2.count].getIconWidth()) {
-            player2.x += 10;
-            player2.count = (player2.count + 1) % 6;
-        }
-
-        if (isJumping2) {
-            player2.y += yVelocity2;
-            yVelocity2 += GRAVITY;
-
-            if (player2.y >= 500) {
-                player2.y = 500;
-                isJumping2 = false;
-                yVelocity2 = 0;
-            }
-        }
-    }
 
     private void drawPlayer(Graphics g, Player player) {
         ImageIcon[] imToDraw;
@@ -334,7 +322,12 @@ public class Playstate extends JPanel implements ActionListener {
                 player.setHit(false); // Stop hit animation
                 player.hitCounter = 0; // Reset counter
             }
+
         } else if (player.isAttacking) {
+            imToDraw = player.imAtk;
+        } else if (player instanceof Mage mage1 && mage1.getMageattack()) {
+            imToDraw = player.imAtk;
+        }else if (player instanceof DarkMage mage1 && mage1.getMageattack()) {
             imToDraw = player.imAtk;
         } else {
             imToDraw = player.im;
@@ -358,18 +351,25 @@ public class Playstate extends JPanel implements ActionListener {
         // Draw Game Over text
         g.setColor(Color.WHITE);
         g.setFont(new Font("Arial", Font.BOLD, 50));
-        g.drawString("Game Over" + " " + result, getWidth() / 2 - 300, getHeight() / 2 - 50);
+        g.drawString("" + " " + result, getWidth() / 2 - 190, getHeight() / 2 - 50);
 
         restartbtn.setVisible(true);
         exitbtn.setVisible(true);
         g.setFont(new Font("Arial", Font.PLAIN, 30));
- //       g.drawString("Press R to Restart", getWidth() / 2 - 120, getHeight() / 2 + 20);
-  //      g.drawString("Press Q to Quit", getWidth() / 2 - 100, getHeight() / 2 + 70);
+        //       g.drawString("Press R to Restart", getWidth() / 2 - 120, getHeight() / 2 + 20);
+        //      g.drawString("Press Q to Quit", getWidth() / 2 - 100, getHeight() / 2 + 70);
     }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(field.getImage(), 0, 0, 1000, 800, this);
+        if (field != null) {
+            g.drawImage(field.getImage(), 0, 0, 1000, 800, this);
+        } else if (field2 != null) {
+            g.drawImage(field2.getImage(), 0, 0, 1000, 800, this);
+        } else if (field3 != null) {
+            g.drawImage(field3.getImage(), 0, 0, 1000, 800, this);
+        }
+
         g.drawImage(fieldDirt.getImage(), 0, getHeight() - 262, 1000, 900, this);
 
         int seconds = timeRemaining / 1000;
@@ -407,7 +407,29 @@ public class Playstate extends JPanel implements ActionListener {
                     );
 
                     if (fireball.getBound().intersects(player2Bounds)) {
-                        player2.takeDamage(30);  // Reduce player2 HP
+                        player2.takeDamage(player1.getATK());  // Reduce player2 HP
+                        fireball.deactivate();  // Deactivate fireball on collision
+                        player2.setHit(true);    // Trigger hit animation
+                        player2.hitCounter = 0;  // Reset hit counter for a fresh animation cycle
+                    }
+                }
+            }
+        }
+        if (player1 instanceof DarkMage mage1) {
+            mage1.updateFireballs(); // Update fireballs list
+            for (FireballDark fireball : mage1.fireballs) {
+                if (fireball.isActive()) {  // Draw only active fireballs
+                    g.drawImage(fireball.getImage(), fireball.x, fireball.y, this);
+                    // Check collision with player2
+                    Rectangle player2Bounds = new Rectangle(
+                            player2.x,
+                            player2.y,
+                            player2.im[Math.min(player2.count, player2.im.length - 1)].getIconWidth(),
+                            player2.im[Math.min(player2.count, player2.im.length - 1)].getIconHeight()
+                    );
+
+                    if (fireball.getBound().intersects(player2Bounds)) {
+                        player2.takeDamage(player1.getATK());  // Reduce player2 HP
                         fireball.deactivate();  // Deactivate fireball on collision
                         player2.setHit(true);    // Trigger hit animation
                         player2.hitCounter = 0;  // Reset hit counter for a fresh animation cycle
@@ -433,7 +455,30 @@ public class Playstate extends JPanel implements ActionListener {
                     );
 
                     if (fireball.getBound().intersects(player1Bounds)) {
-                        player1.takeDamage(30);  // Reduce player1 HP
+                        player1.takeDamage(player2.getATK());  // Reduce player1 HP
+                        fireball.deactivate();   // Deactivate fireball on collision
+                        player1.setHit(true);    // Trigger hit animation
+                        player1.hitCounter = 0;  // Reset hit counter for a fresh animation cycle
+                    }
+                }
+            }
+        }
+        if (player2 instanceof DarkMage mage2) {
+            mage2.updateFireballs(); // Update fireballs list
+            for (FireballDark fireball : mage2.fireballs) {
+                if (fireball.isActive()) {  // Draw only active fireballs
+                    g.drawImage(fireball.getImage(), fireball.x, fireball.y, this);
+
+                    // Check collision with player1
+                    Rectangle player1Bounds = new Rectangle(
+                            player1.x,
+                            player1.y,
+                            player1.im[Math.min(player1.count, player1.im.length - 1)].getIconWidth(),
+                            player1.im[Math.min(player1.count, player1.im.length - 1)].getIconHeight()
+                    );
+
+                    if (fireball.getBound().intersects(player1Bounds)) {
+                        player1.takeDamage(player2.getATK());  // Reduce player1 HP
                         fireball.deactivate();   // Deactivate fireball on collision
                         player1.setHit(true);    // Trigger hit animation
                         player1.hitCounter = 0;  // Reset hit counter for a fresh animation cycle
@@ -449,11 +494,11 @@ public class Playstate extends JPanel implements ActionListener {
         Rectangle player2Bounds = new Rectangle(player2.x, player2.y, player2.im[player2.count].getIconWidth(), player2.im[player2.count].getIconHeight());
 
         if (player1.isAttacking && player1Bounds.intersects(player2Bounds)) {
-            player2.takeDamage(10);
+            player2.takeDamage(player1.getATK());
         }
 
         if (player2.isAttacking && player2Bounds.intersects(player1Bounds)) {
-            player1.takeDamage(10);
+            player1.takeDamage(player2.getATK());
         }
     }
 

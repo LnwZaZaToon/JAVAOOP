@@ -31,6 +31,14 @@ public class ChoosePlayer extends JPanel {
     private ImageIcon   skeletonbtn = new ImageIcon(this.getClass().getResource("skeletonbtn.jpg"));
     private ImageIcon   magebtn = new ImageIcon(this.getClass().getResource("magebtn.jpg"));
     
+    private ImageIcon   Darkmagebtn = new ImageIcon(this.getClass().getResource("Darkmagebtnreal.jpg"));
+    
+     private ImageIcon   bgbtn1 = new ImageIcon(this.getClass().getResource("bg1real.jpg"));
+     private ImageIcon   bgbtn2 = new ImageIcon(this.getClass().getResource("bg2real.jpg"));
+     private ImageIcon   bgbtn3 = new ImageIcon(this.getClass().getResource("bg3real.jpg"));
+    
+
+    
     
     
     
@@ -52,6 +60,16 @@ public class ChoosePlayer extends JPanel {
     // mage
     JButton MageClass1 = new JButton(magebtn);
     JButton MageClass2 = new JButton(magebtn);
+    
+    JButton DarkMageClass1 = new JButton(Darkmagebtn);
+    JButton DarkMageClass2 = new JButton(Darkmagebtn);    
+    
+    
+    
+    JButton bg1 = new JButton(bgbtn1);
+    JButton bg2 = new JButton(bgbtn2);   
+    JButton bg3 = new JButton(bgbtn3);    
+    
 
     JLabel p1Status = new JLabel("");
     JLabel p2Status = new JLabel("");
@@ -67,19 +85,32 @@ public class ChoosePlayer extends JPanel {
         add(Heros2);
         Demons2.setBounds(800, 200, 170, 90);
         add(Demons2);
-        p1Status.setBounds(170, 100, 170, 90);
+        p1Status.setBounds(120, 100, 170, 90);
         add(p1Status);
-        p2Status.setBounds(780, 100, 170, 90);
+        p2Status.setBounds(720, 100, 170, 90);
         add(p2Status);
 
         KnightClass1.setBounds(10, 350, 170, 90);
         KnightClass2.setBounds(610, 350, 170, 90);
+        
+        
 
         MageClass1.setBounds(200, 350, 170, 90);
         MageClass2.setBounds(800, 350, 170, 90);
+        
+        DarkMageClass1.setBounds(200, 350, 170, 90);
+        DarkMageClass2.setBounds(800, 350, 170, 90);
 
         DemonsClass1.setBounds(10, 350, 170, 90);
         DemonsClass2.setBounds(610, 350, 170, 90);
+        
+        bg1.setBounds(250, 475, 170, 90);
+        add(bg1);        
+        bg2.setBounds(440, 475, 170, 90);
+        add(bg2);       
+        bg3.setBounds(630, 475, 170, 90);
+        add(bg3);       
+        
 
         DemonsClass1.setVisible(false);
         KnightClass1.setVisible(false);
@@ -87,6 +118,8 @@ public class ChoosePlayer extends JPanel {
         KnightClass2.setVisible(false);
         MageClass2.setVisible(false);
         DemonsClass2.setVisible(false);
+        DarkMageClass1.setVisible(false);
+        DarkMageClass2.setVisible(false);
         
         Bback.setBounds(250, 600, 170, 90);
         Breset.setBounds(440, 600, 170, 90);
@@ -101,6 +134,8 @@ public class ChoosePlayer extends JPanel {
         add(MageClass2);
         add(DemonsClass1);
         add(DemonsClass2);
+        add(DarkMageClass1);
+        add(DarkMageClass2);
 
     }
 
@@ -109,10 +144,12 @@ public class ChoosePlayer extends JPanel {
             DemonsClass1.setVisible(false);
             KnightClass1.setVisible(true);
             MageClass1.setVisible(true);
+            DarkMageClass1.setVisible(false);
         } else if (class1.equals("Demons")) {
             DemonsClass1.setVisible(true);
             KnightClass1.setVisible(false);
             MageClass1.setVisible(false);
+            DarkMageClass1.setVisible(true);
         }
     }
 
@@ -121,10 +158,12 @@ public class ChoosePlayer extends JPanel {
             DemonsClass2.setVisible(false);
             KnightClass2.setVisible(true);
             MageClass2.setVisible(true);
+            DarkMageClass2.setVisible(false);
         } else if (class2.equals("Demons")) {
             DemonsClass2.setVisible(true);
             KnightClass2.setVisible(false);
             MageClass2.setVisible(false);
+            DarkMageClass2.setVisible(true);
         }
     }
     public void CreateClassPlayer1(Player object){
@@ -154,6 +193,9 @@ public class ChoosePlayer extends JPanel {
         DemonsClass2.setVisible(false);
         KnightClass2.setVisible(false);
         MageClass2.setVisible(false);
+        DarkMageClass1.setVisible(false);
+        DarkMageClass2.setVisible(false);
+        
     }
 
     public void paintComponent(Graphics g) {
@@ -163,6 +205,8 @@ public class ChoosePlayer extends JPanel {
         g.setFont(new Font("2005_iannnnnTKO", Font.CENTER_BASELINE, 50));
         g.drawString("Player1", 100, 100);
         g.drawString("Player2 ", 700, 100);
+        g.setFont(new Font("2005_iannnnnTKO", Font.CENTER_BASELINE, 20));
+        g.drawString("Choose map", 460, 430);
     }
 
 }

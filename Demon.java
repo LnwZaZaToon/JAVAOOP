@@ -13,8 +13,9 @@ import javax.swing.ImageIcon;
 public class Demon extends Player {
 
     public Demon() {
-        this.setHP(500);
-        this.setMaxHP(500);
+        this.setATK(40);
+        this.setHP(1500);
+        this.setMaxHP(1500);
         for (int i = 0; i < im.length; i++) {
             im[i] = new ImageIcon(this.getClass().getResource("demon" + (i + 1) + ".png"));
         }
@@ -24,6 +25,12 @@ public class Demon extends Player {
 
         for (int i = 0; i < 1; i++) {
             hitAnimationFrames[i] = new ImageIcon(this.getClass().getResource("Demonhit" + (i + 1) + ".png"));
+        }
+    }
+    public void attack() {
+        if (!isAttacking) {
+            isAttacking = true;
+            count = 3;  
         }
     }
 

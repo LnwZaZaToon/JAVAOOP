@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import static javax.swing.JOptionPane.showMessageDialog;
 
@@ -17,6 +18,12 @@ public class NewGame extends JFrame implements ActionListener {
     HomePage home = new HomePage();
     ChoosePlayer chooseplayer = new ChoosePlayer();
     Playstate playstate = new Playstate();
+
+    private ImageIcon feild = new ImageIcon(this.getClass().getResource("Bg.png"));
+    private ImageIcon feild2 = new ImageIcon(this.getClass().getResource("medeival1.jpg"));
+    private ImageIcon feild3 = new ImageIcon(this.getClass().getResource("medieval3real.jpg"));
+
+    private ImageIcon setBG;
 
     public NewGame() throws HeadlessException {
 
@@ -37,10 +44,18 @@ public class NewGame extends JFrame implements ActionListener {
 
         chooseplayer.MageClass1.addActionListener(this);
         chooseplayer.MageClass2.addActionListener(this);
+        
+        chooseplayer.DarkMageClass1.addActionListener(this);
+        chooseplayer.DarkMageClass2.addActionListener(this);        
 
         chooseplayer.Bnext.addActionListener(this);
         chooseplayer.Bback.addActionListener(this);
         chooseplayer.Breset.addActionListener(this);
+
+        chooseplayer.bg1.addActionListener(this);
+        chooseplayer.bg2.addActionListener(this);
+        chooseplayer.bg3.addActionListener(this);
+
         playstate.restartbtn.addActionListener(this);
         playstate.exitbtn.addActionListener(this);
 
@@ -104,9 +119,19 @@ public class NewGame extends JFrame implements ActionListener {
 
         } else if (e.getSource() == chooseplayer.MageClass1) {
             chooseplayer.CreateClassPlayer1(new Mage());
+           
         } else if (e.getSource() == chooseplayer.MageClass2) {
             chooseplayer.CreateClassPlayer2(new Mage());
-        } else if (e.getSource() == chooseplayer.Bback) {
+        } else if (e.getSource() == chooseplayer.DarkMageClass2) {
+            chooseplayer.CreateClassPlayer2(new DarkMage());
+           
+        } else if (e.getSource() == chooseplayer.DarkMageClass1) {
+            chooseplayer.CreateClassPlayer1(new DarkMage());
+            
+        } 
+        
+        
+        else if (e.getSource() == chooseplayer.Bback) {
             chooseplayer.Reset();
             this.setLocationRelativeTo(null);
             this.remove(chooseplayer);
@@ -115,9 +140,10 @@ public class NewGame extends JFrame implements ActionListener {
 
         } else if (e.getSource() == chooseplayer.Breset) {
             chooseplayer.Reset();
+            setBG = null;
 
         } else if (e.getSource() == chooseplayer.Bnext) {
-            if (chooseplayer.CheckPlayerNULL()) {
+            if (chooseplayer.CheckPlayerNULL() && setBG != null) {
                 playstate.setPlayers(chooseplayer.player1, chooseplayer.player2);
                 this.setLocationRelativeTo(null);
                 this.remove(chooseplayer);
@@ -125,23 +151,32 @@ public class NewGame extends JFrame implements ActionListener {
                 playstate.requestFocusInWindow();
 
             } else {
-                showMessageDialog(null, "you have to select player 1 and 2 first");
+                showMessageDialog(null, "you have to select player 1 and 2 and map first");
             }
         } else if (e.getSource() == playstate.restartbtn) {
             this.setLocationRelativeTo(null);
             this.remove(playstate);
-             playstate = new Playstate();
+            playstate = new Playstate();
             this.add(home);
             home.requestFocusInWindow();
             chooseplayer.Reset();
             playstate.matchOver = false;
             playstate.validate();
             playstate.repaint();
-            
 
         } else if (e.getSource() == playstate.exitbtn) {
             System.exit(0);
 
+        } else if (e.getSource() == chooseplayer.bg1) {
+            setBG = feild;
+            playstate.field = feild;
+        } else if (e.getSource() == chooseplayer.bg2) {
+            setBG = feild2;
+            playstate.field = feild2;
+
+        } else if (e.getSource() == chooseplayer.bg3) {
+            setBG = feild3;
+            playstate.field = feild3;
         }
         this.validate();
         this.repaint();

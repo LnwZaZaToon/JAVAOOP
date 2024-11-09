@@ -12,11 +12,10 @@ import javax.swing.ImageIcon;
  */
 public class Knight extends Player {
 
-    public Knight(int x, int y) {
-        super(x, y);
-    }
+
 
     public Knight() {
+        this.setATK(20);
         this.setHP(1000);
         this.setMaxHP(1000);
         for (int i = 0; i < im.length; i++) {
@@ -29,5 +28,12 @@ public class Knight extends Player {
             hitAnimationFrames[i] = new ImageIcon(this.getClass().getResource("Knighthit" + (i + 1) + ".png"));
         }
 
+    }
+  
+    public void attack() {
+        if (!isAttacking) {
+            isAttacking = true;
+            count = 3;  
+        }
     }
 }

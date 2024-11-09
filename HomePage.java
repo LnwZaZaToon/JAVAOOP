@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 public class HomePage extends JPanel {
 
     private ImageIcon feild = new ImageIcon(this.getClass().getResource("Bg.png"));
-    private ImageIcon starts = new ImageIcon(this.getClass().getResource("startbtn2.jpg"));
+    private ImageIcon starts = new ImageIcon(this.getClass().getResource("startbtn4.jpg"));
     private ImageIcon exit = new ImageIcon(this.getClass().getResource("exitbtn.jpg"));
     public JButton BStart = new JButton(starts);
     public JButton BExit = new JButton(exit);
